@@ -65,7 +65,7 @@ build fail
 
 [from the original ELK docs](https://elk-audio.github.io/elk-docs/html/documents/building_plugins_for_elk.html#plugins-using-juce-version-6)
 
-I personally build on a WSL2 Ubuntu 20.04, but it should work on any linux machine.
+I personally build on a WSL2 Ubuntu 22.04.4, but it should work on any linux machine.
 
 ## install SDK on a linux machine  (first time only)
 
