@@ -1,6 +1,7 @@
 #pragma once
 
-#include <JuceHeader.h>
+#include "juce_audio_basics/juce_audio_basics.h"
+#include "juce_dsp/juce_dsp.h"
 #include "BitModulation.h"
 #include "Constants.h"
 #include "DCBlocker.h"
@@ -8,6 +9,7 @@
 #include "ProcessorUtils.h"
 #include "VASVFilter.h"
 
+using namespace juce;
 class DelayProcessor
 {
 public:

@@ -1,9 +1,11 @@
 #pragma once
 
-#include <JuceHeader.h>
+#include <juce_audio_processors/juce_audio_processors.h>
+
 #include "Constants.h"
 #include "DelayProcessor.h"
 
+using namespace juce;
 namespace paramID
 {
 #define PARAMETER_ID(str) constexpr const char* str { #str };
@@ -54,7 +56,7 @@ noexcept (noexcept (std::initializer_list<int> { (func(std::forward<Items>(items
     (void)std::initializer_list<int> { ((void)func(std::forward<Items>(items)), 0)... };
 }
 
-class StrangeReturnsAudioProcessor : public AudioProcessor, private ValueTree::Listener
+class StrangeReturnsAudioProcessor : public juce::AudioProcessor, private ValueTree::Listener
 {
 public:
     //==============================================================================

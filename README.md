@@ -3,8 +3,8 @@ This is a fork of [JackWithOneEye's Strange Return](https://github.com/JackWithO
 featuring a variable delay time with modulation, feedback, optional tape simulation, bit crushing, and a low-pass filter.
 
 I forked this repo to adapt it to the ElkPi platform, using CMake and a patched JUCE 6.1.6.
-My project is to build a dub sound system control tower, with a Raspberry Pi 4 and a hifiberry DAC+ ADC Pro, which 
-will use this plugin among others.
+My project is to build a dub sound system control tower multi effect module, 
+with a Raspberry Pi 4 running Elk Audio OS and a hifiberry DAC+ ADC Pro, which will use this plugin among others.
 
 I might or might not add features to this plugin, depending on my needs and time.
 I would like to implement a more flexible time control, with a tap tempo button,
@@ -58,28 +58,32 @@ StrangeReturns plugin.
 
 
 # CrossBuilding for ElkPi
+
 This will only work with JUCE 6, and the juceaide CMakeLists.txt needs to get rid of all the cross-compile unset(xxx)
 because sourcing the SDK will set all the needed stuff and the unset(xxx) calls will override the SDK thus making the
 build fail
 
 [from the original ELK docs](https://elk-audio.github.io/elk-docs/html/documents/building_plugins_for_elk.html#plugins-using-juce-version-6)
 
+I personally build on a WSL2 Ubuntu 20.04, but it should work on any linux machine.
+
 ## install SDK on a linux machine  (first time only)
 
-- get the SDK from there and run it to install (ideally keep the default destinations) :
+Get the Elk cross-build SDK from there and run it to install (ideally keep the default destinations) :
   https://github.com/elk-audio/elkpi-sdk/releases
 
 ## Build
-In the repo folder, type:
 
-```mkdir x-build && cd x-build```
+With the Elk crossbuild SDK installed, cd to the repo folder, then run these commands in the following order :
 
-```unset LD_LIBRARY_PATH && source /opt/elk/1.0.0/environment-setup-cortexa72-elk-linux```
+- ```mkdir x-build && cd x-build```
 
-```export CXXFLAGS="-O3 -pipe -ffast-math -feliminate-unused-debug-types -funroll-loops"```
+- ```unset LD_LIBRARY_PATH && source /opt/elk/1.0.0/environment-setup-cortexa72-elk-linux```
 
-```cmake ../ -DCMAKE_BUILD_TYPE=Release```
+- ```export CXXFLAGS="-O3 -pipe -ffast-math -feliminate-unused-debug-types -funroll-loops"```
 
-```AR=aarch64-elk-linux-ar make -j `nproc` CONFIG=Release CFLAGS="-Wno-psabi" TARGET_ARCH="-mcpu=cortex-a72 -mtune=cortex-a72"```
+- ```cmake ../ -DCMAKE_BUILD_TYPE=Release```
+
+- ```AR=aarch64-elk-linux-ar make -j `nproc` CONFIG=Release CFLAGS="-Wno-psabi" TARGET_ARCH="-mcpu=cortex-a72 -mtune=cortex-a72"```
 
 The resulting x-build/StrangeReturns_artefacts/Debug/VST3/Audio Plugin Example.vst3 is ready to use on your Elk-Pi device.

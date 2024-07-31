@@ -17,8 +17,6 @@ juce_add_plugin(StrangeReturns
     FORMATS VST3 Standalone                     # The formats to build. Other valid formats are: AAX Unity VST AU AUv3
     PRODUCT_NAME "Strange Returns")             # The name of the final executable, which can differ from the target name
 
-juce_generate_juce_header(StrangeReturns)
-
 file(GLOB_RECURSE SourceFiles CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/Source/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/Source/*.h")
 target_sources(StrangeReturns INTERFACE ${SourceFiles})
 

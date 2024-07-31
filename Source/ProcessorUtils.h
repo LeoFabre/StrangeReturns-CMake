@@ -1,4 +1,7 @@
 #pragma once
+#include <juce_audio_basics/juce_audio_basics.h>
+#include <juce_dsp/juce_dsp.h>
+using namespace juce;
 
 constexpr float SMOOTHED_VAL_RAMP_LEN_SEC = 0.1f;
 
