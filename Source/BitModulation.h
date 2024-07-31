@@ -1,6 +1,6 @@
 #pragma once
 
-#include <float.h>
+#include <cfloat>
 
 class BitModulation
 {
@@ -32,8 +32,8 @@ private:
 	static inline std::pair<long long, int> ifrexp(float d)
 	{
 		int exp;
-		float mant = std::frexpf(d, &exp);
-		return std::make_pair(static_cast<long long>((mant * std::powf(2.0f, FLT_MANT_DIG))), static_cast<int>(exp));
+		float mant = std::frexp(d, &exp);
+		return std::make_pair(static_cast<long long>((mant * std::pow(2.0f, FLT_MANT_DIG))), static_cast<int>(exp));
 	}
 
 	static inline float and_(float a, float b)
@@ -48,12 +48,12 @@ private:
 		mb = mb >> (ea - eb);
 
 		if (ma < 0)
-			return (mb & ~(-ma)) * std::powf(2.0f, ea - FLT_MANT_DIG);
+			return (mb & ~(-ma)) * std::pow(2.0f, ea - FLT_MANT_DIG);
 
 		if (mb < 0)
-			return (~(-mb) & ma) * std::powf(2.0f, ea - FLT_MANT_DIG);
+			return (~(-mb) & ma) * std::pow(2.0f, ea - FLT_MANT_DIG);
 
-		return (mb & ma) * std::powf(2.0f, ea - FLT_MANT_DIG);
+		return (mb & ma) * std::pow(2.0f, ea - FLT_MANT_DIG);
 	}
 
 	static inline float or_(float a, float b)
@@ -68,12 +68,12 @@ private:
 		mb = mb >> (ea - eb);
 
 		if (ma < 0)
-			return (-(~(mb | ~(-ma)))) * std::powf(2.0f, ea - FLT_MANT_DIG);
+			return (-(~(mb | ~(-ma)))) * std::pow(2.0f, ea - FLT_MANT_DIG);
 
 		if (mb < 0)
-			return (-(~(~(-mb) | ma))) * std::powf(2.0f, ea - FLT_MANT_DIG);
+			return (-(~(~(-mb) | ma))) * std::pow(2.0f, ea - FLT_MANT_DIG);
 
-		return (mb | ma) * std::powf(2.0f, ea - FLT_MANT_DIG);
+		return (mb | ma) * std::pow(2.0f, ea - FLT_MANT_DIG);
 	}
 
 	static inline float xor_(float a, float b)
@@ -87,7 +87,7 @@ private:
 
 		mb = mb >> (ea - eb);
 
-		return (mb ^ ma) * std::powf(2.0f, ea - FLT_MANT_DIG);
+		return (mb ^ ma) * std::pow(2.0f, ea - FLT_MANT_DIG);
 	}
 
 	static inline bool isPositive(float a)

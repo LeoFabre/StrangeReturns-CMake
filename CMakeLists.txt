@@ -5,7 +5,7 @@ project(StrangeReturns VERSION 0.0.1)
 add_subdirectory(JUCE) # Use our patched JUCE 6.1.6, which skips the unset(xxx) calls
 
 juce_add_plugin(StrangeReturns
-    COMPANY_NAME Juce-Dev                       # Specify the name of the plugin's author (i put Juce-Dev to have my dev VST grouped together)
+    COMPANY_NAME Juce-Dev                       # Specify the name of the plugin's author (I put Juce-Dev to have my dev VST grouped together)
     IS_SYNTH FALSE                              # Is this a synth or an effect?
     NEEDS_MIDI_INPUT FALSE                      # Does the plugin need midi input?
     NEEDS_MIDI_OUTPUT FALSE                     # Does the plugin need midi output?
@@ -14,8 +14,8 @@ juce_add_plugin(StrangeReturns
     PLUGIN_MANUFACTURER_CODE Juce               # A four-character manufacturer id with at least one upper-case character
     PLUGIN_CODE Stgr                            # A unique four-character plugin id with exactly one upper-case character
                                                 # GarageBand 10.3 requires the first letter to be upper-case, and the remaining letters to be lower-case
-    FORMATS VST3 Standalone                     # The formats to build. Other valid formats are: AAX Unity VST AU AUv3
-    PRODUCT_NAME "Strange Returns")             # The name of the final executable, which can differ from the target name
+    FORMATS VST3                                # The formats to build. Other valid formats are: AAX Unity VST AU AUv3
+    PRODUCT_NAME "StrangeReturns")              # The name of the final executable, which can differ from the target name
 
 file(GLOB_RECURSE SourceFiles CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/Source/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/Source/*.h")
 target_sources(StrangeReturns INTERFACE ${SourceFiles})
