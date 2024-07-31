@@ -9,3 +9,7 @@ JuceLibraryCode
 *.DS_Store
 *.swp
 *~
+
+/cmake-build-debug/
+/x-build/
+/.idea/
