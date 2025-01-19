@@ -151,7 +151,7 @@ public:
         static const StringArray bmOperandsOptions() { return StringArray{ "POST FX + POST FX", "PRE FX + POST FX", "DRY + POST FX" }; }
 
         explicit ParameterReferences(AudioProcessorValueTreeState::ParameterLayout& layout)
-            : time(addToLayout(layout, std::make_unique<Parameter>(paramID::time, "Time", "ms", NormalisableRange<float>(0.01f, MAX_DELAY_TIME_SEC * 1000.0f, 1.0f, 0.5f), 100.0f, valueToTextFunction, textToValueFunction))),
+            : time(addToLayout(layout, std::make_unique<Parameter>(paramID::time, "Time", "ms", NormalisableRange<float>(1.0f, MAX_DELAY_TIME_SEC * 1000.0f, 1.0f, 0.5f), 100.0f, valueToTextFunction, textToValueFunction))),
               feedback(addToLayout(layout, std::make_unique<Parameter>(paramID::feedback, "Feedback", "%", NormalisableRange<float>(0.0f, 100.0f), 0.0f, valueToTextFunction, textToValueFunction))),
               toneType(addToLayout(layout, std::make_unique<AudioParameterChoice>(paramID::toneType, "Type", toneTypeOptions(), 0))),
               effectsRouting(addToLayout(layout, std::make_unique<AudioParameterChoice>(paramID::effectsRouting, "Effects Routing", effectsRoutingOptions(), 1))),
@@ -226,9 +226,8 @@ private:
     std::deque<std::chrono::steady_clock::time_point> tapTimes;
     std::mutex tapMutex;
     bool TapTempoEnabled = false;
-    float BaseDelayTime_ms = 500.0f;
-    float ReferencePotPosition = 0.25f;
-    float AdjustedDelayTime_ms = 500.0f;
+    float TapTempoTime_ms = -1.0f;
+    float TimeAtTapTempoActivation = -1.0f;
     bool isButtonHeld = false;
     std::atomic<bool> tapTempoHeld{ false };
     void timerCallback() override;

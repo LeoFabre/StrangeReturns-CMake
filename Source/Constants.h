@@ -1,6 +1,6 @@
 #pragma once
 
-constexpr int MAX_DELAY_TIME_SEC = 4;
+constexpr int MAX_DELAY_TIME_SEC = 2;
 
 constexpr float MIN_MOD_RATE_HZ = 0.02f;
 constexpr float MAX_MOD_RATE_HZ = 10.0f;

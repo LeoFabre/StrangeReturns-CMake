@@ -104,7 +104,7 @@ void StrangeReturnsAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
 
     if (requiresUpdate.load())
     {
-        auto time = parameters.time.get();
+        auto timePot_ms = parameters.time.get();
         auto feedback = parameters.feedback.get();
         auto toneType = parameters.toneType.getIndex();
 
@@ -115,7 +115,9 @@ void StrangeReturnsAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
         auto noiseLevel = parameters.noiseLevel.get();
         auto noiseType = parameters.noiseType.getIndex();
 
-        delayProcessor.setDelayParameters(time, feedback, toneType, modRate, modDepth, modWave, noiseLevel, noiseType);
+        delayProcessor.setDelayParameters(
+            (parameters.tapTempoEnabled.get() ? TapTempoTime_ms : timePot_ms)
+            , feedback, toneType, modRate, modDepth, modWave, noiseLevel, noiseType);
 
         auto effectsRouting = parameters.effectsRouting.getIndex();
 
@@ -136,16 +138,8 @@ void StrangeReturnsAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
 
         delayProcessor.setEffectsParameters(effectsRouting, flipPhase, bcDepth, decimReduction, decimStereoSpread, lpfCutoff, lpfQ, lpfPosition, bmLevel, bmOperation, bmOperands);
 
-        // Passer les informations Tap Tempo au DelayProcessor
-        delayProcessor.setTapTempoEnabled(parameters.tapTempoEnabled.get());
-        delayProcessor.setBaseDelayTime(BaseDelayTime_ms);
-        delayProcessor.setReferencePotPosition(ReferencePotPosition);
-
         requiresUpdate.store(false);
     }
-
-    // Gestion du Tap Tempo est maintenant intégrée via les paramètres
-    // Aucun traitement supplémentaire ici
 
     delayProcessor.processBlock(buffer);
 }
@@ -231,17 +225,18 @@ void StrangeReturnsAudioProcessor::handleTapTempo(bool isPressed)
                     averageInterval /= intervals.size();
 
                     // Mettre à jour la valeur de delay time
-                    BaseDelayTime_ms = averageInterval;
-                    ReferencePotPosition = parameters.time.get() / (MAX_DELAY_TIME_SEC * 1000.0f); // Supposant que 'time' est en ms
+                    TapTempoTime_ms = averageInterval;
+                    TimeAtTapTempoActivation = parameters.time.get();
 
                     // Activer le mode Tap Tempo
                     parameters.tapTempoEnabled.setValueNotifyingHost(true);
-                    DBG("Tap tempo enabled. Time : " + String(BaseDelayTime_ms) + "ms");
+                    DBG("Tap tempo enabled. Time : " + String(TapTempoTime_ms) + "ms");
 
                     // Informer le DelayProcessor
-                    delayProcessor.setBaseDelayTime(BaseDelayTime_ms);
-                    delayProcessor.setReferencePotPosition(ReferencePotPosition);
+                    delayProcessor.setTapTempoTime(TapTempoTime_ms);
+                    delayProcessor.setReferencePotPosition(TimeAtTapTempoActivation);
                     delayProcessor.setTapTempoEnabled(true);
+                    requiresUpdate.store(true);
                 }
             }
 

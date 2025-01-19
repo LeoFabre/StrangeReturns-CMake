@@ -96,7 +96,7 @@ public:
     }
 
     // Tap Tempo
-    void setBaseDelayTime(float baseDelay_ms) { BaseDelayTime_ms = baseDelay_ms; }
+    void setTapTempoTime(float baseDelay_ms) { BaseDelayTime_ms = baseDelay_ms; }
     void setReferencePotPosition(float referencePosition) { ReferencePotPosition = referencePosition; }
     void setTapTempoEnabled(bool enabled) { TapTempoEnabled = enabled; }
 
