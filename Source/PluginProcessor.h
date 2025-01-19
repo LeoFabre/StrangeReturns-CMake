@@ -151,7 +151,7 @@ public:
         static const StringArray bmOperandsOptions() { return StringArray{ "POST FX + POST FX", "PRE FX + POST FX", "DRY + POST FX" }; }
 
         explicit ParameterReferences(AudioProcessorValueTreeState::ParameterLayout& layout)
-            : time(addToLayout(layout, std::make_unique<Parameter>(paramID::time, "Time", "ms", NormalisableRange<float>(1.0f, MAX_DELAY_TIME_SEC * 1000.0f, 1.0f, 0.5f), 100.0f, valueToTextFunction, textToValueFunction))),
+            : time(addToLayout(layout, std::make_unique<Parameter>(paramID::time, "Time", "ms", NormalisableRange<float>(50.0f, MAX_DELAY_TIME_SEC * 1000.0f, 1.0f, 0.5f), 100.0f, valueToTextFunction, textToValueFunction))),
               feedback(addToLayout(layout, std::make_unique<Parameter>(paramID::feedback, "Feedback", "%", NormalisableRange<float>(0.0f, 100.0f), 0.0f, valueToTextFunction, textToValueFunction))),
               toneType(addToLayout(layout, std::make_unique<AudioParameterChoice>(paramID::toneType, "Type", toneTypeOptions(), 0))),
               effectsRouting(addToLayout(layout, std::make_unique<AudioParameterChoice>(paramID::effectsRouting, "Effects Routing", effectsRoutingOptions(), 1))),

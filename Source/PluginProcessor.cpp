@@ -115,9 +115,13 @@ void StrangeReturnsAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
         auto noiseLevel = parameters.noiseLevel.get();
         auto noiseType = parameters.noiseType.getIndex();
 
-        delayProcessor.setDelayParameters(
-            (parameters.tapTempoEnabled.get() ? TapTempoTime_ms : timePot_ms)
-            , feedback, toneType, modRate, modDepth, modWave, noiseLevel, noiseType);
+        float effectiveTime = (parameters.tapTempoEnabled.get()
+                                   ? jmax(50.0f, TapTempoTime_ms + (timePot_ms - TimeAtTapTempoActivation))
+                                   : timePot_ms);
+
+        DBG("delta time: " + String(timePot_ms - TimeAtTapTempoActivation));
+
+        delayProcessor.setDelayParameters(effectiveTime, feedback, toneType, modRate, modDepth, modWave, noiseLevel, noiseType);
 
         auto effectsRouting = parameters.effectsRouting.getIndex();
 

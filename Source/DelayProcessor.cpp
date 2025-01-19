@@ -111,7 +111,7 @@ void DelayProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
 
     maxModDepth_smpls = MAX_MOD_DEPTH_SECS * fs;
 
-    time_smpls.reset(fs, 0.5f);
+    time_smpls.reset(fs, 0.25f);
     feedback_lin.reset(fs, SMOOTHED_VAL_RAMP_LEN_SEC);
 
     modRate_Hz.reset(fs, SMOOTHED_VAL_RAMP_LEN_SEC);
