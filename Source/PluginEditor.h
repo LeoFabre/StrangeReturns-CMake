@@ -14,36 +14,35 @@ public:
     void resized() override;
 
 private:
-    
+
     struct BasicControls : public Component
     {
         explicit BasicControls(const StrangeReturnsAudioProcessor::ParameterReferences& state)
             : time(state.time),
-            feedback(state.feedback),
-            dryWet(state.dryWet),
-            toneType(state.toneType),
-            effectsRouting(state.effectsRouting)
+              feedback(state.feedback),
+              toneType(state.toneType),
+              effectsRouting(state.effectsRouting)
         {
-            addAllAndMakeVisible(*this, time, feedback, dryWet, toneType, effectsRouting);
+            addAllAndMakeVisible(*this, time, feedback, toneType, effectsRouting);
         }
 
         void resized() override
         {
-            performLayout(getLocalBounds(), time, feedback, dryWet, toneType, effectsRouting);
+            performLayout(getLocalBounds(), time, feedback, toneType, effectsRouting);
         }
 
-        AttachedSlider time, feedback, dryWet;
+        AttachedSlider time, feedback;
         AttachedCombo toneType, effectsRouting;
     };
-    
+
     struct ModAndNoiseControls : public Component
     {
         explicit ModAndNoiseControls(const StrangeReturnsAudioProcessor::ParameterReferences& state)
             : modRate(state.modRate),
-            modDepth(state.modDepth),
-            noiseLevel(state.noiseLevel),
-            modWave(state.modWave),
-            noiseType(state.noiseType)
+              modDepth(state.modDepth),
+              noiseLevel(state.noiseLevel),
+              modWave(state.modWave),
+              noiseType(state.noiseType)
         {
             addAllAndMakeVisible(*this, modRate, modDepth, modWave, noiseLevel, noiseType);
         }
@@ -56,14 +55,14 @@ private:
         AttachedSlider modRate, modDepth, noiseLevel;
         AttachedCombo modWave, noiseType;
     };
-    
+
     struct PhaseBitCrusherDecimatorControls : public Component
     {
         explicit PhaseBitCrusherDecimatorControls(const StrangeReturnsAudioProcessor::ParameterReferences& state)
             : flipPhase(state.flipPhase),
-            bcDepth(state.bcDepth),
-            decimReduction(state.decimReduction),
-            decimStereoSpread(state.decimStereoSpread)
+              bcDepth(state.bcDepth),
+              decimReduction(state.decimReduction),
+              decimStereoSpread(state.decimStereoSpread)
         {
             addAllAndMakeVisible(*this, flipPhase, bcDepth, decimReduction, decimStereoSpread);
         }
@@ -76,13 +75,13 @@ private:
         AttachedToggle flipPhase;
         AttachedSlider bcDepth, decimReduction, decimStereoSpread;
     };
-    
+
     struct LpfControls : public Component
     {
         explicit LpfControls(const StrangeReturnsAudioProcessor::ParameterReferences& state)
             : lpfCutoff(state.lpfCutoff),
-            lpfQ(state.lpfQ),
-            lpfPosition(state.lpfPosition)
+              lpfQ(state.lpfQ),
+              lpfPosition(state.lpfPosition)
         {
             addAllAndMakeVisible(*this, lpfCutoff, lpfQ, lpfPosition);
         }
@@ -95,13 +94,13 @@ private:
         AttachedSlider lpfCutoff, lpfQ;
         AttachedCombo lpfPosition;
     };
-    
+
     struct BitModControls : public Component
     {
         explicit BitModControls(const StrangeReturnsAudioProcessor::ParameterReferences& state)
             : bmLevel(state.bmLevel),
-            bmOperation(state.bmOperation),
-            bmOperands(state.bmOperands)
+              bmOperation(state.bmOperation),
+              bmOperands(state.bmOperands)
         {
             addAllAndMakeVisible(*this, bmLevel, bmOperation, bmOperands);
         }
@@ -114,14 +113,17 @@ private:
         AttachedSlider bmLevel;
         AttachedCombo bmOperation, bmOperands;
     };
-    
+
     StrangeReturnsAudioProcessor& audioProcessor;
-    
+
     BasicControls basicControls { audioProcessor.getParameterValues() };
     ModAndNoiseControls modAndNoiseControls { audioProcessor.getParameterValues() };
     PhaseBitCrusherDecimatorControls phaseBitCrusherDecimatorControls { audioProcessor.getParameterValues() };
     LpfControls lpfControls { audioProcessor.getParameterValues() };
     BitModControls bitModControls { audioProcessor.getParameterValues() };
+
+    TextButton tapTempoButton{"Tap Tempo"};
+    std::unique_ptr<AudioProcessorValueTreeState::ButtonAttachment> tapTempoBtnAttachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (StrangeReturnsAudioProcessorEditor)
 };
