@@ -21,6 +21,7 @@ namespace paramID
     PARAMETER_ID(effectsRouting)
     PARAMETER_ID(tapTempoEnabled)
     PARAMETER_ID(tapTempoButton)
+    PARAMETER_ID(beatMultiply)
 
     // MODULATION
     PARAMETER_ID(modRate)
@@ -136,6 +137,21 @@ public:
         //     return String(x, 2);
         // }
 
+        static const StringArray beatMultiplyOptions()
+        {
+            return StringArray{
+                "0.25",
+                "0.3333333",
+                "0.5",
+                "0.6666666",
+                "0.75",
+                "1.0",
+                "1.25",
+                "1.333333",
+                "1.5"
+            };
+        }
+
         static const StringArray toneTypeOptions() { return StringArray{ "DIGITAL", "TAPE" }; }
 
         static const StringArray effectsRoutingOptions() { return StringArray{ "IN", "OUT" }; }
@@ -157,7 +173,7 @@ public:
               effectsRouting(addToLayout(layout, std::make_unique<AudioParameterChoice>(paramID::effectsRouting, "Effects Routing", effectsRoutingOptions(), 1))),
               tapTempoEnabled(addToLayout(layout, std::make_unique<AudioParameterBool>(paramID::tapTempoEnabled, "Tap Tempo Enabled", false))),
               tapTempoButton(addToLayout(layout, std::make_unique<AudioParameterBool>(paramID::tapTempoButton, "Tap Tempo Button", false))),
-
+              beatMultiply(addToLayout(layout, std::make_unique<AudioParameterChoice>(paramID::beatMultiply, "Beat Multiply", beatMultiplyOptions(), 6))),
               modRate(addToLayout(layout, std::make_unique<Parameter>(paramID::modRate, "Mod Rate", "Hz", NormalisableRange<float>(MIN_MOD_RATE_HZ, MAX_MOD_RATE_HZ), MIN_MOD_RATE_HZ, valueToTextFunction, textToValueFunction))),
               modDepth(addToLayout(layout, std::make_unique<Parameter>(paramID::modDepth, "Mod Depth", "%", NormalisableRange<float>(0.0f, 100.0f), 0.0f, valueToTextFunction, textToValueFunction))),
               modWave(addToLayout(layout, std::make_unique<AudioParameterChoice>(paramID::modWave, "Mod Wave", modWaveOptions(), 1))),
@@ -183,6 +199,7 @@ public:
 
         Parameter& time;
         Parameter& feedback;
+        AudioParameterChoice& beatMultiply;
         AudioParameterChoice& toneType;
         AudioParameterChoice& effectsRouting;
         AudioParameterBool& tapTempoEnabled;
@@ -235,8 +252,8 @@ private:
     ParameterReferences parameters;
     AudioProcessorValueTreeState vts;
     std::atomic<bool> requiresUpdate{ true };
-    
+
     DelayProcessor delayProcessor;
-        
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (StrangeReturnsAudioProcessor)
 };

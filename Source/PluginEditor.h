@@ -17,21 +17,22 @@ private:
 
     struct BasicControls : public Component
     {
-        explicit BasicControls(const StrangeReturnsAudioProcessor::ParameterReferences& state)
+        explicit BasicControls(const StrangeReturnsAudioProcessor::ParameterReferences &state)
             : time(state.time),
               feedback(state.feedback),
+              beatMultiply(state.beatMultiply),
               toneType(state.toneType),
               effectsRouting(state.effectsRouting)
         {
-            addAllAndMakeVisible(*this, time, feedback, toneType, effectsRouting);
+            addAllAndMakeVisible(*this, time, feedback, beatMultiply, toneType, effectsRouting);
         }
 
         void resized() override
         {
-            performLayout(getLocalBounds(), time, feedback, toneType, effectsRouting);
+            performLayout(getLocalBounds(), time, feedback, beatMultiply, toneType, effectsRouting);
         }
 
-        AttachedSlider time, feedback;
+        AttachedSlider time, feedback, beatMultiply;
         AttachedCombo toneType, effectsRouting;
     };
 

@@ -115,9 +115,11 @@ void StrangeReturnsAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
         auto noiseLevel = parameters.noiseLevel.get();
         auto noiseType = parameters.noiseType.getIndex();
 
+        float currentBeatMultiplyFactor = parameters.beatMultiply.getCurrentChoiceName().getFloatValue();
+
         float effectiveTime = (parameters.tapTempoEnabled.get()
-                                   ? jmax(50.0f, TapTempoTime_ms + (timePot_ms - TimeAtTapTempoActivation))
-                                   : timePot_ms);
+                                   ? jmax(50.0f, currentBeatMultiplyFactor * TapTempoTime_ms + (timePot_ms - TimeAtTapTempoActivation))
+                                   : timePot_ms * currentBeatMultiplyFactor);
 
         DBG("delta time: " + String(timePot_ms - TimeAtTapTempoActivation));
 
