@@ -18,10 +18,10 @@ constexpr float MAX_BITCRUSHER_Q = 2.0f;
 constexpr float MIN_DECIMATOR_RATIO = 0.0001f;
 constexpr float MAX_DECIMATOR_RATIO = 1.0f;
 
-constexpr float MIN_LPF_CUTOFF_FREQ = 20.0f;
-constexpr float MAX_LPF_CUTOFF_FREQ = 20480.0f;
+constexpr float MIN_FILTER_CUTOFF_FREQ = 20.0f;
+constexpr float MAX_FILTER_CUTOFF_FREQ = 20480.0f;
 
-constexpr float MIN_LPF_Q = 0.707f;
-constexpr float MAX_LPF_Q = 20.0f;
+constexpr float MIN_FILTER_Q = 0.707f;
+constexpr float MAX_FILTER_Q = 20.0f;
 
 constexpr int NUM_CHANNELS = 2;

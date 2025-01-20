@@ -138,11 +138,17 @@ void StrangeReturnsAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
         auto lpfQ = parameters.lpfQ.get();
         auto lpfPosition = parameters.lpfPosition.getIndex();
 
+        auto hpfCutoff = parameters.hpfCutoff.get();
+        auto hpfQ = parameters.hpfQ.get();
+        auto hpfPosition = parameters.hpfPosition.getIndex();
+
         auto bmLevel = parameters.bmLevel.get();
         auto bmOperation = parameters.bmOperation.getIndex();
         auto bmOperands = parameters.bmOperands.getIndex();
 
-        delayProcessor.setEffectsParameters(effectsRouting, flipPhase, bcDepth, decimReduction, decimStereoSpread, lpfCutoff, lpfQ, lpfPosition, bmLevel, bmOperation, bmOperands);
+        delayProcessor.setEffectsParameters(effectsRouting, flipPhase, bcDepth, decimReduction, decimStereoSpread,
+                                            lpfCutoff, lpfQ, lpfPosition, bmLevel, bmOperation, bmOperands, hpfCutoff, hpfQ, hpfPosition);
+
 
         requiresUpdate.store(false);
     }

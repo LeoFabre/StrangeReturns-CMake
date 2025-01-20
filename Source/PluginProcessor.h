@@ -47,6 +47,11 @@ namespace paramID
     PARAMETER_ID(lpfQ)
     PARAMETER_ID(lpfPosition)
 
+    // HPF
+    PARAMETER_ID(hpfCutoff)
+    PARAMETER_ID(hpfQ)
+    PARAMETER_ID(hpfPosition)
+
     // BIT MODULATION
     PARAMETER_ID(bmLevel)
     PARAMETER_ID(bmOperation)
@@ -160,7 +165,7 @@ public:
 
         static const StringArray noiseTypeOptions() { return StringArray{ "WHITE", "BROWNIAN", "PINK" }; }
 
-        static const StringArray lpfPositionOptions() { return StringArray{ "PRE BITMOD", "POST BITMOD" }; }
+        static const StringArray filterPositionOptions() { return StringArray{ "PRE BITMOD", "POST BITMOD" }; }
 
         static const StringArray bmOperationOptions() { return StringArray{ "NONE", "XOR", "AND", "OR" }; }
 
@@ -188,9 +193,13 @@ public:
               decimReduction(addToLayout(layout, std::make_unique<Parameter>(paramID::decimReduction, "Sample Rate Reduction", "", NormalisableRange<float>(MIN_DECIMATOR_RATIO, MAX_DECIMATOR_RATIO, 0.0f, 0.25f), MAX_DECIMATOR_RATIO, decimReductionValueToTextFunction, textToValueFunction))),
               decimStereoSpread(addToLayout(layout, std::make_unique<Parameter>(paramID::decimStereoSpread, "Stereo Spread", "", NormalisableRange<float>(0.0f, 0.5f), 0.0f, valueToTextFunction, textToValueFunction))),
 
-              lpfCutoff(addToLayout(layout, std::make_unique<Parameter>(paramID::lpfCutoff, "LPF Cutoff", "Hz", NormalisableRange<float> (MIN_LPF_CUTOFF_FREQ, MAX_LPF_CUTOFF_FREQ, 0.0f, 0.25f), MAX_LPF_CUTOFF_FREQ, valueToTextFunction, textToValueFunction))),
-              lpfQ(addToLayout(layout, std::make_unique<Parameter>(paramID::lpfQ, "LPF Resonance", "", NormalisableRange<float>(MIN_LPF_Q, MAX_LPF_Q), MIN_LPF_Q, valueToTextFunction, textToValueFunction))),
-              lpfPosition(addToLayout(layout, std::make_unique<AudioParameterChoice>(paramID::lpfPosition, "LPF Position", lpfPositionOptions(), 0))),
+              hpfCutoff(addToLayout(layout, std::make_unique<Parameter>(paramID::hpfCutoff, "LowCut Cutoff", "Hz", NormalisableRange<float> (MIN_FILTER_CUTOFF_FREQ, MAX_FILTER_CUTOFF_FREQ, 0.0f, 0.25f), MIN_FILTER_CUTOFF_FREQ, valueToTextFunction, textToValueFunction))),
+              hpfQ(addToLayout(layout, std::make_unique<Parameter>(paramID::hpfQ, "LowCut Resonance", "", NormalisableRange<float>(MIN_FILTER_Q, MAX_FILTER_Q), MIN_FILTER_Q, valueToTextFunction, textToValueFunction))),
+              hpfPosition(addToLayout(layout, std::make_unique<AudioParameterChoice>(paramID::hpfPosition, "LowCut Position", filterPositionOptions(), 0))),
+
+              lpfCutoff(addToLayout(layout, std::make_unique<Parameter>(paramID::lpfCutoff, "HighCut Cutoff", "Hz", NormalisableRange<float> (MIN_FILTER_CUTOFF_FREQ, MAX_FILTER_CUTOFF_FREQ, 0.0f, 0.25f), MAX_FILTER_CUTOFF_FREQ, valueToTextFunction, textToValueFunction))),
+              lpfQ(addToLayout(layout, std::make_unique<Parameter>(paramID::lpfQ, "HighCut Resonance", "", NormalisableRange<float>(MIN_FILTER_Q, MAX_FILTER_Q), MIN_FILTER_Q, valueToTextFunction, textToValueFunction))),
+              lpfPosition(addToLayout(layout, std::make_unique<AudioParameterChoice>(paramID::lpfPosition, "HighCut Position", filterPositionOptions(), 0))),
 
               bmLevel(addToLayout(layout, std::make_unique<Parameter>(paramID::bmLevel, "BitMod Level", "dB", NormalisableRange<float> (MIN_GAIN_DB, MAX_GAIN_DB), MIN_GAIN_DB, valueToTextFunction, textToValueFunction))),
               bmOperation(addToLayout(layout, std::make_unique<AudioParameterChoice>(paramID::bmOperation, "BitMod Operation", bmOperationOptions(), 0))),
@@ -218,6 +227,10 @@ public:
 
         Parameter& decimReduction;
         Parameter& decimStereoSpread;
+
+        Parameter& hpfCutoff;
+        Parameter& hpfQ;
+        AudioParameterChoice& hpfPosition;
 
         Parameter& lpfCutoff;
         Parameter& lpfQ;

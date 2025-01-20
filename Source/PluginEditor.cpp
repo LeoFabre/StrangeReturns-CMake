@@ -4,7 +4,7 @@
 StrangeReturnsAudioProcessorEditor::StrangeReturnsAudioProcessorEditor (StrangeReturnsAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p)
 {
-    addAllAndMakeVisible(*this, basicControls, modAndNoiseControls, phaseBitCrusherDecimatorControls, lpfControls, bitModControls);
+    addAllAndMakeVisible(*this, basicControls, modAndNoiseControls, phaseBitCrusherDecimatorControls, filterControls, bitModControls);
 
     addAndMakeVisible(tapTempoButton);
     tapTempoBtnAttachment = std::make_unique<AudioProcessorValueTreeState::ButtonAttachment>(
@@ -53,7 +53,7 @@ void StrangeReturnsAudioProcessorEditor::resized()
     phaseBitCrusherDecimatorControls.setBounds(rowMarginLeft, y, rowWidth, rowHeight);
 
     y += rowHeight + rowGap;
-    lpfControls.setBounds(rowMarginLeft, y, rowWidth, rowHeight);
+    filterControls.setBounds(rowMarginLeft, y, rowWidth, rowHeight);
 
     y += rowHeight + rowGap;
     bitModControls.setBounds(rowMarginLeft, y, rowWidth, rowHeight);

@@ -67,9 +67,14 @@ inline float DelayProcessor::applyEffects(float xDry, float xWet, float phaseFli
     y = decimCurrentOutput[channel];
 
     // LPF if PRE_BITMOD
-    if (lpfPosition == LpfPosition::PRE_BITMOD)
+    if (lpfPosition == FilterPosition::PRE_BITMOD)
     {
         y = lpf[channel].processSample(y);
+    }
+    // HPF if PRE_BITMOD
+    if (hpfPosition == FilterPosition::PRE_BITMOD)
+    {
+        y = hpf[channel].processSample(y);
     }
 
     // bit modulation
@@ -97,9 +102,14 @@ inline float DelayProcessor::applyEffects(float xDry, float xWet, float phaseFli
     y = dcBlocker[channel].processSample(y);
 
     // LPF if POST_BITMOD
-    if (lpfPosition == LpfPosition::POST_BITMOD)
+    if (lpfPosition == FilterPosition::POST_BITMOD)
     {
         y = lpf[channel].processSample(y);
+    }
+    // HPF if POST_BITMOD
+    if (hpfPosition == FilterPosition::POST_BITMOD)
+    {
+        y = hpf[channel].processSample(y);
     }
 
     return y;
@@ -129,6 +139,9 @@ void DelayProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
     lpfCutoff_Hz.reset(fs, SMOOTHED_VAL_RAMP_LEN_SEC);
     lpfQ_lin.reset(fs, SMOOTHED_VAL_RAMP_LEN_SEC);
 
+    hpfCutoff_Hz.reset(fs, SMOOTHED_VAL_RAMP_LEN_SEC);
+    hpfQ_lin.reset(fs, SMOOTHED_VAL_RAMP_LEN_SEC);
+
     bmLevel_lin.reset(fs, SMOOTHED_VAL_RAMP_LEN_SEC);
 
     for (int channel = 0; channel < NUM_CHANNELS; ++channel)
@@ -146,8 +159,13 @@ void DelayProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
         decimPhasor[channel] = 0.0f;
         decimCurrentOutput[channel] = 0.0f;
 
+        hpf[channel].reset(fs);
+        hpf[channel].setParameters(hpfCutoff_Hz.getCurrentValue(), hpfQ_lin.getTargetValue(), false, false, 0.0f, 0.0f,
+                                   1.0f, 0.0f, false);
+
         lpf[channel].reset(fs);
-        lpf[channel].setParameters(lpfCutoff_Hz.getCurrentValue(), lpfQ_lin.getTargetValue(), false, false, 0.0f, 0.0f, 0.0f, 1.0f, false);
+        lpf[channel].setParameters(lpfCutoff_Hz.getCurrentValue(), lpfQ_lin.getTargetValue(), false, false, 0.0f, 0.0f,
+                                   0.0f, 1.0f, false);
 
         dcBlocker[channel].reset(fs);
     }
@@ -196,6 +214,10 @@ void DelayProcessor::processBlock(AudioBuffer<float> &buffer)
         const float decimReduction = decimReduction_lin.getNextValue();
         const float decimStereoSpread = decimStereoSpread_lin.getNextValue();
 
+        bool hpfValsSmoothing = hpfCutoff_Hz.isSmoothing() || hpfQ_lin.isSmoothing();
+        const float hpfCutoff = hpfCutoff_Hz.getNextValue();
+        const float hpfQ = hpfQ_lin.getNextValue();
+
         bool lpfValsSmoothing = lpfCutoff_Hz.isSmoothing() || lpfQ_lin.isSmoothing();
         const float lpfCutoff = lpfCutoff_Hz.getNextValue();
         const float lpfQ = lpfQ_lin.getNextValue();
@@ -215,6 +237,10 @@ void DelayProcessor::processBlock(AudioBuffer<float> &buffer)
             if (lpfValsSmoothing)
             {
                 lpf[channel].setParameters(lpfCutoff, lpfQ, false, false, 0.0f, 0.0f, 0.0f, 1.0f, false);
+            }
+            if (hpfValsSmoothing)
+            {
+                hpf[channel].setParameters(hpfCutoff, hpfQ, false, false, 0.0f, 0.0f, 1.0f, 0.0f, false);
             }
             
             auto modDepthSmpls = modLfo[channel].getNextSample(0.0f) * maxModDepth_smpls;

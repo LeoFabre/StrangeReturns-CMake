@@ -77,23 +77,28 @@ private:
         AttachedSlider bcDepth, decimReduction, decimStereoSpread;
     };
 
-    struct LpfControls : public Component
+    struct FilterControls : public Component
     {
-        explicit LpfControls(const StrangeReturnsAudioProcessor::ParameterReferences& state)
+        explicit FilterControls(const StrangeReturnsAudioProcessor::ParameterReferences& state)
             : lpfCutoff(state.lpfCutoff),
               lpfQ(state.lpfQ),
-              lpfPosition(state.lpfPosition)
+              lpfPosition(state.lpfPosition),
+              hpfCutoff(state.hpfCutoff),
+              hpfQ(state.hpfQ),
+              hpfPosition(state.hpfPosition)
         {
-            addAllAndMakeVisible(*this, lpfCutoff, lpfQ, lpfPosition);
+            addAllAndMakeVisible(*this, hpfCutoff, hpfQ, hpfPosition, lpfCutoff, lpfQ, lpfPosition);
         }
 
         void resized() override
         {
-            performLayout(getLocalBounds(), lpfCutoff, lpfQ, lpfPosition);
+            performLayout(getLocalBounds(), hpfCutoff, hpfQ, hpfPosition, lpfCutoff, lpfQ, lpfPosition);
         }
 
         AttachedSlider lpfCutoff, lpfQ;
         AttachedCombo lpfPosition;
+        AttachedSlider hpfCutoff, hpfQ;
+        AttachedCombo hpfPosition;
     };
 
     struct BitModControls : public Component
@@ -120,7 +125,7 @@ private:
     BasicControls basicControls { audioProcessor.getParameterValues() };
     ModAndNoiseControls modAndNoiseControls { audioProcessor.getParameterValues() };
     PhaseBitCrusherDecimatorControls phaseBitCrusherDecimatorControls { audioProcessor.getParameterValues() };
-    LpfControls lpfControls { audioProcessor.getParameterValues() };
+    FilterControls filterControls { audioProcessor.getParameterValues() };
     BitModControls bitModControls { audioProcessor.getParameterValues() };
 
     TextButton tapTempoButton{"Tap Tempo"};

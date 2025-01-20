@@ -36,7 +36,7 @@ public:
         OUT
     };
 
-    enum LpfPosition
+    enum FilterPosition
     {
         PRE_BITMOD,
         POST_BITMOD
@@ -70,8 +70,11 @@ public:
         noiseType = static_cast<NoiseType>(_noiseType);
     }
 
-    void setEffectsParameters(int _effectsRouting, bool _flipPhase, float _bcDepth_lin, float _decimReduction_lin, float _decimStereoSpread_lin, float _lpfCutoff_Hz, float _lpfQ_lin, int _lpfPosition, float _bmLevel_dB, int _bmOperation, int _bmOperands)
+    void setEffectsParameters(int _effectsRouting, bool _flipPhase, float _bcDepth_lin, float _decimReduction_lin,
+                              float _decimStereoSpread_lin, float _lpfCutoff_Hz, float _lpfQ_lin, int _lpfPosition,
+                              float _bmLevel_dB, int _bmOperation, int _bmOperands, float _hpfCutoff_Hz, float _hpfQ_lin, int _hpfPosition)
     {
+
         effectsRouting = static_cast<EffectsRouting>(_effectsRouting);
 
         smoothedPhaseFlip.setTargetValue(_flipPhase ? -1.0f : 1.0f);
@@ -83,10 +86,13 @@ public:
 
         lpfCutoff_Hz.setTargetValue(_lpfCutoff_Hz);
         lpfQ_lin.setTargetValue(_lpfQ_lin);
-        lpfPosition = static_cast<LpfPosition>(_lpfPosition);
+        lpfPosition = static_cast<FilterPosition>(_lpfPosition);
 
-        if (bmLevel_dB != _bmLevel_dB)
-        {
+        hpfCutoff_Hz.setTargetValue(_hpfCutoff_Hz);
+        hpfQ_lin.setTargetValue(_hpfQ_lin);
+        hpfPosition = static_cast<FilterPosition>(_hpfPosition);
+
+        if (bmLevel_dB != _bmLevel_dB) {
             bmLevel_dB = _bmLevel_dB;
             bmLevel_lin.setTargetValue(Decibels::decibelsToGain(bmLevel_dB));
         }
@@ -147,10 +153,16 @@ private:
     float decimCurrentOutput[NUM_CHANNELS] { 0.0f, 0.0f };
 
     // low pass filter
-    SmoothedValM lpfCutoff_Hz = MAX_LPF_CUTOFF_FREQ;
-    SmoothedValL lpfQ_lin = MIN_LPF_Q;
-    LpfPosition lpfPosition = LpfPosition::PRE_BITMOD;
+    SmoothedValM lpfCutoff_Hz = MAX_FILTER_CUTOFF_FREQ;
+    SmoothedValL lpfQ_lin = MIN_FILTER_Q;
+    FilterPosition lpfPosition = FilterPosition::PRE_BITMOD;
     StaticVASVFilter lpf[NUM_CHANNELS];
+
+    // high pass filter
+    SmoothedValM hpfCutoff_Hz = MIN_FILTER_CUTOFF_FREQ;
+    SmoothedValL hpfQ_lin = MIN_FILTER_Q;
+    FilterPosition hpfPosition = FilterPosition::PRE_BITMOD;
+    StaticVASVFilter hpf[NUM_CHANNELS];
 
     // bit modulation
     SmoothedValM bmLevel_lin = 0.01f;
