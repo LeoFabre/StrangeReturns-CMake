@@ -1,37 +1,45 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
-StrangeReturnsAudioProcessorEditor::StrangeReturnsAudioProcessorEditor (StrangeReturnsAudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor (p)
+StrangeReturnsAudioProcessorEditor::StrangeReturnsAudioProcessorEditor(StrangeReturnsAudioProcessor &p)
+    : AudioProcessorEditor(&p),
+      audioProcessor(p)
 {
-    addAllAndMakeVisible(*this, basicControls, modAndNoiseControls, phaseBitCrusherDecimatorControls, filterControls, bitModControls);
+    addAllAndMakeVisible(*this, basicControls, modAndNoiseControls, phaseBitCrusherDecimatorControls, filterControls,
+                         bitModControls);
 
     addAndMakeVisible(tapTempoButton);
-    tapTempoBtnAttachment = std::make_unique<AudioProcessorValueTreeState::ButtonAttachment>(
-        audioProcessor.getVts(), "tapTempoButton", tapTempoButton);
 
-    tapTempoButton.onStateChange = [this] {
-        if (tapTempoButton.getState() == Button::ButtonState::buttonDown) {
-            audioProcessor.handleTapTempo(true);
-            DBG("Tap !");
-        }
-        else {
-            audioProcessor.handleTapTempo(false);
-        }
-    };
+    tapTempoButton.setClickingTogglesState(false);
+    if (auto *param = dynamic_cast<AudioParameterBool *>(audioProcessor.getVts().
+        getParameter(paramID::tapTempoButton))) {
+        tapTempoButton.onStateChange = [this, param] {
+            const bool down = tapTempoButton.isDown();
+            static bool prev = false;
+            if (down == prev) return;
+            prev = down;
+
+            if (down) {
+                param->beginChangeGesture();
+                param->setValueNotifyingHost(1.0f);
+            } else {
+                param->setValueNotifyingHost(0.0f);
+                param->endChangeGesture();
+            }
+        };
+    }
+
 
     setSize(900, 850);
 }
 
-StrangeReturnsAudioProcessorEditor::~StrangeReturnsAudioProcessorEditor()
-{
-}
+StrangeReturnsAudioProcessorEditor::~StrangeReturnsAudioProcessorEditor() {}
 
-void StrangeReturnsAudioProcessorEditor::paint (Graphics& g)
+void StrangeReturnsAudioProcessorEditor::paint(Graphics &g)
 {
-    g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));
-    g.setColour (Colours::white);
-    g.setFont (15.0f);
+    g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId));
+    g.setColour(Colours::white);
+    g.setFont(15.0f);
 }
 
 void StrangeReturnsAudioProcessorEditor::resized()

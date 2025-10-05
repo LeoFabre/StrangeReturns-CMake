@@ -69,6 +69,7 @@ noexcept (noexcept (std::initializer_list<int> { (func(std::forward<Items>(items
 
 class StrangeReturnsAudioProcessor : public juce::AudioProcessor,
                                      private ValueTree::Listener,
+                                     private AudioProcessorValueTreeState::Listener,
                                      private Timer
 {
 public:
@@ -152,7 +153,7 @@ public:
                 "0.75",
                 "1.0",
                 "1.25",
-                "1.333333",
+                "1.3333333",
                 "1.5"
             };
         }
@@ -174,11 +175,11 @@ public:
         explicit ParameterReferences(AudioProcessorValueTreeState::ParameterLayout& layout)
             : time(addToLayout(layout, std::make_unique<Parameter>(paramID::time, "Time", "ms", NormalisableRange<float>(50.0f, MAX_DELAY_TIME_SEC * 1000.0f, 1.0f, 0.5f), 100.0f, valueToTextFunction, textToValueFunction))),
               feedback(addToLayout(layout, std::make_unique<Parameter>(paramID::feedback, "Feedback", "%", NormalisableRange<float>(0.0f, 100.0f), 0.0f, valueToTextFunction, textToValueFunction))),
+              beatMultiply(addToLayout(layout, std::make_unique<AudioParameterChoice>(paramID::beatMultiply, "Beat Multiply", beatMultiplyOptions(), 6))),
               toneType(addToLayout(layout, std::make_unique<AudioParameterChoice>(paramID::toneType, "Type", toneTypeOptions(), 0))),
               effectsRouting(addToLayout(layout, std::make_unique<AudioParameterChoice>(paramID::effectsRouting, "Effects Routing", effectsRoutingOptions(), 1))),
               tapTempoEnabled(addToLayout(layout, std::make_unique<AudioParameterBool>(paramID::tapTempoEnabled, "Tap Tempo Enabled", false))),
               tapTempoButton(addToLayout(layout, std::make_unique<AudioParameterBool>(paramID::tapTempoButton, "Tap Tempo Button", false))),
-              beatMultiply(addToLayout(layout, std::make_unique<AudioParameterChoice>(paramID::beatMultiply, "Beat Multiply", beatMultiplyOptions(), 6))),
               modRate(addToLayout(layout, std::make_unique<Parameter>(paramID::modRate, "Mod Rate", "Hz", NormalisableRange<float>(MIN_MOD_RATE_HZ, MAX_MOD_RATE_HZ), MIN_MOD_RATE_HZ, valueToTextFunction, textToValueFunction))),
               modDepth(addToLayout(layout, std::make_unique<Parameter>(paramID::modDepth, "Mod Depth", "%", NormalisableRange<float>(0.0f, 100.0f), 0.0f, valueToTextFunction, textToValueFunction))),
               modWave(addToLayout(layout, std::make_unique<AudioParameterChoice>(paramID::modWave, "Mod Wave", modWaveOptions(), 1))),
@@ -247,6 +248,7 @@ public:
     void handleTapTempo(bool isPressed);
 
 private:
+    void parameterChanged(const juce::String& parameterID, float newValue) override;
     void valueTreePropertyChanged(ValueTree&, const Identifier&) override
     {
         requiresUpdate.store(true);

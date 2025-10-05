@@ -16,10 +16,12 @@ StrangeReturnsAudioProcessor::StrangeReturnsAudioProcessor(AudioProcessorValueTr
     vts(*this, nullptr, Identifier("Parameters"), std::move(layout))
 {
     vts.state.addListener(this);
+    vts.addParameterListener(paramID::tapTempoButton, this);
 }
 
 StrangeReturnsAudioProcessor::~StrangeReturnsAudioProcessor()
 {
+    vts.removeParameterListener(paramID::tapTempoButton, this);
 }
 
 //==============================================================================
@@ -146,8 +148,23 @@ void StrangeReturnsAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
         auto bmOperation = parameters.bmOperation.getIndex();
         auto bmOperands = parameters.bmOperands.getIndex();
 
-        delayProcessor.setEffectsParameters(effectsRouting, flipPhase, bcDepth, decimReduction, decimStereoSpread,
-                                            lpfCutoff, lpfQ, lpfPosition, bmLevel, bmOperation, bmOperands, hpfCutoff, hpfQ, hpfPosition);
+        delayProcessor.setEffectsParameters(
+            effectsRouting,
+            flipPhase,
+            bcDepth,
+            decimReduction,
+            decimStereoSpread,
+            lpfCutoff,
+            lpfQ,
+            lpfPosition,
+            bmLevel,
+            bmOperation,
+            bmOperands,
+            hpfCutoff,
+            hpfQ,
+            hpfPosition
+            );
+
 
 
         requiresUpdate.store(false);
@@ -252,11 +269,22 @@ void StrangeReturnsAudioProcessor::handleTapTempo(bool isPressed)
                 }
             }
 
-            // Réinitialiser le bouton Tap Tempo pour permettre de futurs taps
-            parameters.tapTempoButton.setValueNotifyingHost(false);
             tapTempoHeld.store(false);
         }
     }
+}
+
+void StrangeReturnsAudioProcessor::parameterChanged(const juce::String &parameterID, float newValue)
+{
+    if (parameterID == paramID::tapTempoButton)
+    {
+        const bool isPressed = (newValue >= 0.5f);
+        juce::MessageManager::callAsync([this, isPressed]
+        {
+            handleTapTempo(isPressed);
+        });
+    }
+    requiresUpdate.store(true);
 }
 
 void StrangeReturnsAudioProcessor::timerCallback()
